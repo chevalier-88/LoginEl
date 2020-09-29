@@ -57,7 +57,7 @@ Vue.component('message-form', {
 })
 
 Vue.component('message-row', {
-    props: ['messages', 'message', 'editMessage'],
+    props: ['messages', 'message', 'editMethod'],
     template: '<div>' +
         '<i>{{message.id}}</i> - {{message.text}}' +
         '<span>' +
@@ -67,7 +67,7 @@ Vue.component('message-row', {
         '</div>',
     methods: {
         editMessage: function () {
-            this.editMessage(this.message)
+            this.editMethod(this.message)
         },
         removeMessage: function () {
             messageApi.remove({id: this.message.id}).then(
@@ -91,7 +91,7 @@ Vue.component('messages-list', {
     template:
         '<div>' +
         '<message-form :messages="messages" :messageAttr="message"/>' +
-        '<message-row v-for="message in messages" :key="message.id" :messages="messages" :message="message" :editMessage="editMessage"/>' +
+        '<message-row v-for="message in messages" :key="message.id" :messages="messages" :message="message" :editMethod="editMethod"/>' +
         '</div>',
     created: function () {
         messageApi.get().then(
@@ -103,7 +103,7 @@ Vue.component('messages-list', {
         )
     },
     methods: {
-        editMessage: function (message) {
+        editMethod: function (message) {
             this.message = message;
         }
     }
