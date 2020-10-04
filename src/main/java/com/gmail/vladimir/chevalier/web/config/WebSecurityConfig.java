@@ -1,4 +1,4 @@
-package com.gmail.vladimir.chevalier.web;
+package com.gmail.vladimir.chevalier.web.config;
 
 import com.gmail.vladimir.chevalier.web.entities.User;
 import com.gmail.vladimir.chevalier.web.repo.UserDetailsRepo;
@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/login**", "/js/**", "/error**")
                 .permitAll().anyRequest().authenticated().
-                and().csrf().disable();
+                and().logout().logoutSuccessUrl("/").permitAll().and().csrf().disable();
     }
 
     @Bean

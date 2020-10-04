@@ -14,10 +14,12 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonView(View.Basic.class)
     private Long id;
+    @JsonView(View.Basic.class)
     private String text;
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonView(View.Basic.class)
+    @JsonView(View.Advanced.class)
     private LocalDateTime creationDate;
 }
