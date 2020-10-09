@@ -4,7 +4,10 @@
             <v-toolbar-title>LoginEl</v-toolbar-title>
             <v-spacer/>
             <div v-if="profile">
-                <span>{{profile.name}}&nbsp;</span>
+                <v-btn v-if="profile" :disabled="$route.path === '/'" @click="showMessages">
+                    MessagesList
+                </v-btn>
+                <v-btn v-if="profile">{{profile.name}}&nbsp;</v-btn>
                 <v-btn icon href="/logout">
                     <v-icon>exit_to_app</v-icon>
                 </v-btn>
@@ -12,51 +15,41 @@
         </v-app-bar>
 
         <v-main>
-
-            <v-container v-if="!profile" fluid>
-                <div>Your nead authorization by <a href="/login">Google</a></div>
-            </v-container>
-            <v-container v-if="profile" fluid>
-                <div>
-                    <messages-list :messages="messages"/>
-                </div>
-            </v-container>
+            <router-view></router-view>
         </v-main>
     </v-app>
 </template>
 
 <script>
-    import MessagesList from 'components/messages/MessagesList.vue'
+    import {mapState, mapMutations} from 'vuex'
     import {addHandler} from "util/ws";
 
 
     export default {
         name: "App",
-        components: {
-            MessagesList
+        computed: {
+            ...mapState([
+                'profile'
+            ])
         },
-        data() {
-            return {
-                messages: frontendData.messages,
-                profile: frontendData.profile
+        methods: {
+            ...mapMutations(['addMessageMutation', 'updateMessageMutation', 'removeMessageMutation']),
+            showMessages() {
+                this.$router.push("/")
             }
         },
         created() {
 
             addHandler(data => {
                 if (data.objectType === "MESSAGE") {
-                    const index = this.messages.findIndex(item => item.id === data.body.id)
                     switch (data.eventType) {
                         case'CREATE':
+                            this.addMessageMutation(data.body)
                         case'UPDATE':
-                            if (index > -1) {
-                                this.messages.splice(index, 1, data.body)
-                            } else {
-                                this.messages.push(data.body)
-                            }
+                            this.updateMessageMutation(data.body)
                             break;
                         case'REMOVE':
-                            this.messages.splice(index, 1)
+                            this.removeMessageMutation(data.body)
                             break;
                         default:
                             console.error('Looks like the event type is unknown... "${data.eventType}"')
@@ -65,6 +58,11 @@
                     console.error('Looks like the object type is unknown..."${data.objectType}"')
                 }
             })
+        },
+        beforeMount() {
+            if (!this.profile) {
+                this.$router.replace("/auth")
+            }
         }
     }
 </script>

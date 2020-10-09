@@ -10,15 +10,19 @@
 </template>
 
 <script>
+
+    import {mapActions} from 'vuex'
+
     export default {
         name: "MessageRow",
-        props: ['messages', 'message', 'editMessage', 'removeMessage'],
+        props: ['message', 'editMessage'],
         methods: {
+            ...mapActions(['removeMessageAction']),
             edit() {
                 this.editMessage(this.message)
             },
             remove() {
-                this.removeMessage(this.message)
+                this.removeMessageAction(this.message)
             }
         }
     }
